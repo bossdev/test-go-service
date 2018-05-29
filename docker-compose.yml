@@ -1,0 +1,28 @@
+version: '3'
+services:
+  local_app:
+    build: ./build
+    volumes:
+      - ./src/app:/go/src/app
+    ports:
+      - 80:8080
+    networks:
+      - service_network
+    restart: always
+  local_mysql:
+    image: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_volume:/var/lib/mysql
+    networks:
+      - service_network
+    environment:
+      MYSQL_ROOT_PASSWORD: 8ezjkoMYsql
+    restart: always
+volumes:
+  mysql_volume:
+    driver: local
+networks:
+  service_network:
+    driver: "bridge"
