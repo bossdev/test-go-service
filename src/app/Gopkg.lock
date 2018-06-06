@@ -2,8 +2,29 @@
 
 
 [[projects]]
-  name = "github.com/go-ozzo/ozzo-validation"
+  name = "github.com/asaskevich/govalidator"
   packages = ["."]
+  revision = "ccb8e960c48f04d6935e72476ae4a51028f9e22f"
+  version = "v9"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/globalsign/mgo"
+  packages = [
+    ".",
+    "bson",
+    "internal/json",
+    "internal/sasl",
+    "internal/scram"
+  ]
+  revision = "efe0945164a7e582241f37ae8983c075f8f2e870"
+
+[[projects]]
+  name = "github.com/go-ozzo/ozzo-validation"
+  packages = [
+    ".",
+    "is"
+  ]
   revision = "85dcd8368eba387e65a03488b003e233994e87e9"
   version = "v3.3"
 
@@ -15,18 +36,15 @@
 
 [[projects]]
   name = "github.com/jinzhu/gorm"
-  packages = [
-    ".",
-    "dialects/mysql"
-  ]
+  packages = ["dialects/mysql"]
   revision = "6ed508ec6a4ecb3531899a69cbc746ccf65a4166"
   version = "v1.9.1"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/jinzhu/inflection"
+  name = "github.com/joho/godotenv"
   packages = ["."]
-  revision = "04140366298a54a039076d798123ffa108fff46c"
+  revision = "a79fa1e548e2c689c241d10173efd51e5d689d5b"
+  version = "v1.2.0"
 
 [[projects]]
   name = "github.com/labstack/echo"
@@ -74,17 +92,17 @@
     "acme",
     "acme/autocert"
   ]
-  revision = "1a580b3eff7814fc9b40602fd35256c63b50f491"
+  revision = "ab813273cd59e1333f7ae7bff5d027d4aadf528c"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
+  revision = "c11f84a56e43e20a78cee75a7c034031ecf57d1f"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9eaa10ddb3cbba3e5c9e37901be28609f297ae8c9e22659961205824370c0a8c"
+  inputs-digest = "870b74d8c2a516121103e5dfbf7c499600a0811620e01e562372b1c24579f777"
   solver-name = "gps-cdcl"
   solver-version = 1

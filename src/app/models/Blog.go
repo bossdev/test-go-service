@@ -4,60 +4,55 @@ import (
 	"app/config"
 	"time"
 
+	"github.com/globalsign/mgo/bson"
 	"github.com/go-ozzo/ozzo-validation"
 )
 
-// "time"
 // "app/config"
 // "github.com/jinzhu/gorm"
 
-type Blog struct {
-	// gorm.Model
-	ID          uint    `gorm:"primary_key;AUTO_INCREMENT;column:id"`
-	UserId      int     `gorm:"column:user_id"`
-	Slug        string  `gorm:"column:slug"`
-	TitleTh     string  `gorm:"column:title_th"`
-	TitleEn     string  `gorm:"column:title_en"`
-	ContentTh   string  `gorm:"column:content_th"`
-	ContentEn   string  `gorm:"column:content_en"`
-	Format      string  `gorm:"default:markdown;column:format"`
-	Type        string  `gorm:"default:post;column:type"`
-	Status      string  `gorm:"default:draft;column:status"`
-	CountView   int     `gorm:"default:draft;column:count_view"`
-	View        int     `gorm:"column:view"`
-	ThumbsL     string  `gorm:"column:thumbs_l"`
-	Cover       string  `gorm:"column:cover"`
-	ThumbsS     string  `gorm:"column:thumbs_s"`
-	TitleCover  string  `gorm:"type:varchar(100);column:title_cover"`
-	CreatedAt   string  `gorm:"column:created_at"`
-	UpdatedAt   string  `gorm:"column:updated_at"`
-	DeletedAt   *string `gorm:"column:deleted_at;"`
-	PublishedAt string  `gorm:"column:published_at"`
-	// CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt *time.Time `json:"deleted_at"`
-	// PublishedAt time.Time `json:"published_at"`
-}
+const COLLECTION = "blog_contents"
 
-func (b *Blog) TableName() string {
-	return "blog_contents"
+type Blog struct {
+	ID          bson.ObjectId `bson:"_id" json:"id"`
+	UserId      int           `bson:"user_id" json:"userId" form:"userId"`
+	Slug        string        `bson:"slug" json:"slug" form:"slug"`
+	TitleTh     string        `bson:"title_th" json:"titleTh" form:"titleTh"`
+	TitleEn     string        `bson:"title_en" json:"titleEn" form:"titleEn"`
+	ContentTh   string        `bson:"content_th" json:"contentTh" form:"contentTh"`
+	ContentEn   string        `bson:"content_en" json:"contentEn" form:"contentEn"`
+	Format      string        `bson:"format" json:"format"`
+	Type        string        `bson:"type" json:"type"`
+	Status      string        `bson:"status" json:"status" form:"status"`
+	CountView   int           `bson:"count_view" json:"countView"`
+	View        int           `bson:"view" json:"view"`
+	ThumbsL     string        `bson:"thumbs_l" json:"thumbsL"`
+	Cover       string        `bson:"cover" json:"cover"`
+	ThumbsS     string        `bson:"thumbs_s" json:"thumbsS"`
+	TitleCover  string        `bson:"title_cover" json:"titleCover"`
+	CreatedAt   time.Time     `bson:"created_at" json:"createdAt"`
+	UpdatedAt   time.Time     `bson:"updated_at" json:"updatedAt"`
+	DeletedAt   *time.Time    `bson:"deleted_at" json:"deletedAt"`
+	PublishedAt *time.Time    `bson:"published_at" json:"publishedAt"`
 }
 
 func SetCurrentTime(blog *Blog, lists ...string) {
 	createdFormat := "2006-01-02 15:04:05"
 	now := time.Now()
 	currentDate := now.In(config.Get().LocalTimeZone).Format(createdFormat)
+	t, _ := time.Parse(createdFormat, currentDate)
 	for _, list := range lists {
 		switch list {
 		case "CreatedAt":
-			blog.CreatedAt = currentDate
+			blog.CreatedAt = t
 		case "UpdatedAt":
-			blog.UpdatedAt = currentDate
+			blog.UpdatedAt = t
 		case "PublishedAt":
-			blog.PublishedAt = currentDate
+			blog.PublishedAt = &t
 		case "DeletedAt":
-			cur := currentDate
-			blog.DeletedAt = &cur
+			// cur := currentDate
+			// blog.DeletedAt = &cur
+			blog.DeletedAt = &t
 		}
 	}
 	// t, _ := time.Parse(createdFormat , currentDate) <- set string to time
