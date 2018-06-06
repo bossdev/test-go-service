@@ -1,0 +1,39 @@
+version: '3'
+services:
+  local_app:
+    build: ./build
+    volumes:
+      - ./src/app:/go/src/app
+    ports:
+      - 80:8080
+    networks:
+      - service_network
+    restart: always
+  local_mongo:
+    image: mongo:3.4
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_volume:/data/db
+    networks:
+      - service_network
+    restart: always
+  # local_mysql:
+  #   image: mysql
+  #   ports:
+  #     - 3306:3306
+  #   volumes:
+  #     - mysql_volume:/var/lib/mysql
+  #   networks:
+  #     - service_network
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 8ezjkoMYsql
+  #   restart: always
+volumes:
+  # mysql_volume:
+  #   driver: local
+  mongo_volume:
+    driver: local
+networks:
+  service_network:
+    driver: "bridge"
