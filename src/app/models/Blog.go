@@ -11,8 +11,6 @@ import (
 // "app/config"
 // "github.com/jinzhu/gorm"
 
-const COLLECTION = "blog_contents"
-
 type Blog struct {
 	ID          bson.ObjectId `bson:"_id" json:"id"`
 	UserId      int           `bson:"user_id" json:"userId" form:"userId"`

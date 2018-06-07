@@ -1,6 +1,6 @@
 version: '3'
 services:
-  local_app:
+  app:
     build: ./build
     volumes:
       - ./src/app:/go/src/app
@@ -9,8 +9,9 @@ services:
     networks:
       - service_network
     restart: always
-  local_mongo:
+  mongo:
     image: mongo:3.4
+    # command: "--smallfiles"
     ports:
       - 27017:27017
     volumes:
@@ -18,7 +19,7 @@ services:
     networks:
       - service_network
     restart: always
-  # local_mysql:
+  # mysql:
   #   image: mysql
   #   ports:
   #     - 3306:3306

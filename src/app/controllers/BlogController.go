@@ -24,36 +24,7 @@ type ResponseData struct {
 	Errors  error
 }
 
-const createdFormat = "2006-01-02 15:04:05"
-
-func (ctrl BlogController) TestTimeIndex(c echo.Context) (err error) {
-	// // get time current
-	// loc,_ := time.LoadLocation("Asia/Bangkok")
-	// timenow := time.Now().In(loc).Format(createdFormat)
-
-	// public,_ := time.Parse(createdFormat,"2018-05-17 13:53:50")
-	// publics := public.Unix()
-	// now := time.Unix(publics,0).Format(createdFormat)
-
-	// local := time.Now().Local()
-	// un := now.Unix()
-
-	// // get time from date data
-	// now , _ := time.Parse(createdFormat,"2018-05-17 13:53:50")
-	// un := now.Unix()
-	// // tt := time.Unix(un, 0).Format(createdFormat)
-	// DBHost, _ := os.LookupEnv("DB_HOST")
-	// log.Println(DBHost)
-	// errOp := godotenv.Load(".env")
-	// if errOp != nil {
-	// 	log.Println(errOp)
-	// }
-	// // return c.JSON(200, DBHost)
-	// return c.JSON(200, os.Getenv("FOO"))
-	// cf := config.Get().LocalTimeZone
-	// log.Println(cf)
-	return c.JSON(200, "")
-}
+const COLLECTION = "blog_contents"
 
 // --- List Blog ---
 func (ctrl BlogController) IndexBlog(c echo.Context) (err error) {
@@ -73,12 +44,12 @@ func (ctrl BlogController) IndexBlog(c echo.Context) (err error) {
 		query["format"] = c.QueryParam("status")
 	}
 	query["deleted_at"] = nil
-	getObj := ctrl.Db.C(models.COLLECTION).Find(query)
+	getObj := ctrl.Db.C(COLLECTION).Find(query)
 	LimitPerPage := 10
 	SkipDoc := 0
 
-	if c.QueryParam("perPage") != "" {
-		LimitPerPage, _ = strconv.Atoi(c.FormValue("perPage"))
+	if c.QueryParam("limit") != "" {
+		LimitPerPage, _ = strconv.Atoi(c.FormValue("limit"))
 		getObj = getObj.Limit(LimitPerPage)
 	}
 	if c.QueryParam("page") != "" {
@@ -126,7 +97,7 @@ func (ctrl BlogController) StoreBlog(c echo.Context) (err error) {
 	}
 	models.SetCurrentTime(&modelBlog, "CreatedAt", "UpdatedAt")
 
-	ctrl.Db.C(models.COLLECTION).Insert(&modelBlog)
+	ctrl.Db.C(COLLECTION).Insert(&modelBlog)
 
 	if err != nil {
 		log.Println(err)
@@ -147,7 +118,7 @@ func (ctrl BlogController) GetBlog(c echo.Context) (err error) {
 		return c.JSON(statusCode, Res)
 	}
 
-	query := getObj.C(models.COLLECTION).Find(bson.M{"_id": bson.ObjectIdHex(id), "deleted_at": nil})
+	query := getObj.C(COLLECTION).Find(bson.M{"_id": bson.ObjectIdHex(id), "deleted_at": nil})
 	count, _ := query.Count()
 	if count <= 0 {
 		statusCode := 404
@@ -175,7 +146,7 @@ func (ctrl BlogController) UpdateBlog(c echo.Context) (err error) {
 		Res := ResponseData{statusCode, "Blog was not found", nil}
 		return c.JSON(statusCode, Res)
 	}
-	getCl := getObj.C(models.COLLECTION)
+	getCl := getObj.C(COLLECTION)
 	query := getCl.Find(bson.M{"_id": bson.ObjectIdHex(id), "deleted_at": nil})
 	count, _ := query.Count()
 	if count <= 0 {
@@ -222,59 +193,6 @@ func (ctrl BlogController) UpdateBlog(c echo.Context) (err error) {
 		log.Println(err)
 	}
 	return c.JSON(http.StatusOK, &modelBlog)
-
-	// var modelBlog models.Blog
-	// var count int
-	// id := c.Param("id")
-
-	// ctrl.Db.Where("id = ?", id).Find(&modelBlog).Count(&count)
-	// if count > 0 {
-	// 	// ctrl.Db.First(&modelBlog, id)
-	// 	if c.FormValue("UserId") != "" {
-	// 		modelBlog.UserId, _ = strconv.Atoi(c.FormValue("UserId"))
-	// 	}
-	// 	if c.FormValue("TitleTh") != "" {
-	// 		modelBlog.TitleTh = c.FormValue("TitleTh")
-	// 	}
-	// 	if c.FormValue("TitleEn") != "" {
-	// 		modelBlog.TitleEn = c.FormValue("TitleEn")
-	// 	}
-	// 	if c.FormValue("ContentTh") != "" {
-	// 		modelBlog.ContentTh = c.FormValue("ContentTh")
-	// 	}
-	// 	if c.FormValue("ContentEn") != "" {
-	// 		modelBlog.ContentEn = c.FormValue("ContentEn")
-	// 	}
-	// 	if c.FormValue("Slug") != "" {
-	// 		modelBlog.Slug = c.FormValue("Slug")
-	// 	}
-	// 	if c.FormValue("Status") != "" {
-	// 		modelBlog.Status = c.FormValue("Status")
-	// 		if c.FormValue("Status") == "publish" {
-	// 			models.SetCurrentTime(&modelBlog, "PublishedAt")
-	// 		} else if c.FormValue("Status") == "draft" {
-	// 			modelBlog.PublishedAt = "0000-00-00 00:00:00"
-	// 		}
-	// 	}
-
-	// 	formErr := modelBlog.Validate()
-	// 	if formErr != nil {
-	// 		statusCode := 422
-	// 		Res := ResponseData{statusCode, "Validation Failed", formErr}
-	// 		return c.JSON(statusCode, Res)
-	// 	}
-	// 	// models.SetCurrentTime(&modelBlog, "UpdatedAt")
-	// 	ctrl.Db.Model(&modelBlog).Where("id = ?", id).Updates(modelBlog)
-	// } else {
-	// 	statusCode := 500
-	// 	Res := ResponseData{statusCode, "Blog was not found", nil}
-	// 	return c.JSON(statusCode, Res)
-	// }
-
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-	// return c.JSON(http.StatusOK, &modelBlog)
 }
 
 // --- Delete Blog ---
@@ -282,14 +200,17 @@ func (ctrl BlogController) DeleteBlog(c echo.Context) (err error) {
 	modelBlog := models.Blog{}
 	id := c.Param("id")
 	getObj := ctrl.Db
-
+	typeDelete := "soft"
+	if c.QueryParam("typeDel") != "" {
+		typeDelete = c.QueryParam("typeDel")
+	}
 	// --- check param id is objectId ? and check blog by id ---
 	if !bson.IsObjectIdHex(id) {
 		statusCode := 404
 		Res := ResponseData{statusCode, "Blog was not found", nil}
 		return c.JSON(statusCode, Res)
 	}
-	getCl := getObj.C(models.COLLECTION)
+	getCl := getObj.C(COLLECTION)
 	query := getCl.Find(bson.M{"_id": bson.ObjectIdHex(id), "deleted_at": nil})
 	count, _ := query.Count()
 	if count <= 0 {
@@ -300,8 +221,13 @@ func (ctrl BlogController) DeleteBlog(c echo.Context) (err error) {
 	//---------------------------------------
 
 	query.One(&modelBlog)
-	models.SetCurrentTime(&modelBlog, "DeletedAt")
-	getCl.UpdateId(bson.ObjectIdHex(id), &modelBlog)
+
+	if typeDelete == "force" {
+		getCl.RemoveId(bson.ObjectIdHex(id))
+	} else {
+		models.SetCurrentTime(&modelBlog, "DeletedAt")
+		getCl.UpdateId(bson.ObjectIdHex(id), &modelBlog)
+	}
 
 	if err != nil {
 		log.Println(err)

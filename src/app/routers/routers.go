@@ -15,7 +15,6 @@ type Routers struct {
 
 func (rts Routers) GetRouter() {
 	ctrl := controllers.BlogController{rts.Db}
-	rts.Ec.GET("blog/test", ctrl.TestTimeIndex)
 	rts.Ec.GET("blog", ctrl.IndexBlog)
 	rts.Ec.GET("blog/:id", ctrl.GetBlog)
 	rts.Ec.POST("blog", ctrl.StoreBlog)
