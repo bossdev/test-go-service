@@ -13,6 +13,8 @@ RUN go get github.com/jinzhu/now
 RUN go get github.com/pilu/fresh
 RUN go get github.com/joho/godotenv
 RUN go get github.com/go-ozzo/ozzo-validation
+RUN go get github.com/globalsign/mgo
+RUN go get github.com/stretchr/testify
 
-# CMD go run /go/src/app/main.go
+CMD go run /go/src/app/main.go
 # CMD fresh -c runner.conf
